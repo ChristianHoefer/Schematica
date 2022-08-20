@@ -30,6 +30,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import net.minecraftforge.fluids.BlockFluidBase;
+import net.minecraft.util.Vec3;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -89,9 +90,18 @@ public class SchematicPrinter {
     }
 
     public boolean print(final WorldClient world, final EntityPlayerSP player) {
-        final double dX = ClientProxy.playerPosition.x - this.schematic.position.x;
-        final double dY = ClientProxy.playerPosition.y - this.schematic.position.y;
-        final double dZ = ClientProxy.playerPosition.z - this.schematic.position.z;
+        double dX = ClientProxy.playerPosition.x - this.schematic.position.x;
+        double dY = ClientProxy.playerPosition.y - this.schematic.position.y;
+        double dZ = ClientProxy.playerPosition.z - this.schematic.position.z;
+
+        MovingObjectPosition movingObjectPosition = Minecraft.getMinecraft().objectMouseOver;
+        BlockPos blockPos = movingObjectPosition.getBlockPos();
+        if(blockPos != null){
+            dX = blockPos.getX() - this.schematic.position.x;
+            dY = blockPos.getY() - this.schematic.position.y;
+            dZ = blockPos.getZ() - this.schematic.position.z;
+        }
+
         final int x = (int) Math.floor(dX);
         final int y = (int) Math.floor(dY);
         final int z = (int) Math.floor(dZ);
@@ -107,6 +117,8 @@ public class SchematicPrinter {
         if (minX > maxX || minY > maxY || minZ > maxZ) {
             return false;
         }
+
+
 
         final int slot = player.inventory.currentItem;
         final boolean isSneaking = player.isSneaking();
